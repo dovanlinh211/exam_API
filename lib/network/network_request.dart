@@ -34,7 +34,7 @@ class NetworkRequest {
 
 // User Detail
 
-  // Request json UserDetail from url which pass from UserList screen => parse it to UserDetail model and return UserDetail
+  // Request json UserDetail from url which passed from UserList screen => parse it to UserDetail model and return UserDetail
   static Future<UserDetail> fetchUserDetail(String urlDetail) async{
     final response_detail = await http.get(Uri.parse(urlDetail));
     if(response_detail.statusCode==200){
