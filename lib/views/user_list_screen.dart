@@ -3,11 +3,13 @@ import 'package:flutter/rendering.dart';
 import 'package:github_api_app/constants/app_color.dart';
 import 'package:github_api_app/constants/app_string.dart';
 import 'package:github_api_app/constants/size_unit.dart';
+import 'package:github_api_app/repositories/users_api.dart';
 import 'package:github_api_app/utils/badge_convert.dart';
 import 'package:github_api_app/network/network_request.dart';
-import 'package:github_api_app/screen/user_detail_screen.dart';
+import 'package:github_api_app/view_models/users_list_view_model.dart';
+import 'package:github_api_app/views/user_detail_screen.dart';
 
-import '../model/users.dart';
+import '../models/users.dart';
 
 class UserList extends StatefulWidget {
   const UserList({Key? key}) : super(key: key);
@@ -17,16 +19,14 @@ class UserList extends StatefulWidget {
 }
 
 class _UserListState extends State<UserList> {
+  // Dependency Injection
+  var usersListViewModel =
+      UsersListViewModel(repoGet: UsersAPI()).fetchAllUsers();
   //construct params
-  List<Users> userDataList = [];
   String urlToGetUsers = AppString.urlToGetUser;
   @override
   initState() {
     super.initState();
-    NetworkRequest.fetchUsers(urlToGetUsers)
-        .then((dataFromServer) => setState(() {
-              userDataList = dataFromServer;
-            }));
   }
 
   @override
@@ -44,7 +44,7 @@ class _UserListState extends State<UserList> {
                   Expanded(
                       child: ListView.builder(
                           padding: EdgeInsets.all(10),
-                          itemCount: userDataList.length,
+                          itemCount: usersListViewModel.length,
                           itemBuilder: (context, index) {
                             // Navigate to User Detail when tap on item
                             return GestureDetector(
@@ -52,8 +52,10 @@ class _UserListState extends State<UserList> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => UserDetailScreen( url: userDataList[index].url)));
-                              print("taped to ${userDataList[index].login} at:\n ${DateTime.now().millisecondsSinceEpoch}");
+                                        builder: (context) => UserDetailScreen(
+                                            url: userDataList[index].url)));
+                                print(
+                                    "taped to ${userDataList[index].login} at:\n ${DateTime.now().millisecondsSinceEpoch}");
                               },
 
                               // ITEM in ListView
@@ -64,20 +66,24 @@ class _UserListState extends State<UserList> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     Align(
-                                      alignment:const AlignmentDirectional(0, 0.05),
+                                      alignment:
+                                          const AlignmentDirectional(0, 0.05),
                                       child: Padding(
-                                        padding: const EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(10, 10, 10, 10),
                                         // Row Layout
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
-                                          crossAxisAlignment:CrossAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
                                           children: [
                                             // Avatar contrainer
                                             Container(
-                                              width:SizeUnit.widthSizeUnit * 27,
+                                              width:
+                                                  SizeUnit.widthSizeUnit * 27,
                                               clipBehavior: Clip.antiAlias,
                                               decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
+                                                shape: BoxShape.circle,
                                               ),
                                               child: Image.network(
                                                 '${userDataList[index].avatarUrl}',
@@ -90,31 +96,55 @@ class _UserListState extends State<UserList> {
                                               children: [
                                                 // Name row
                                                 Padding(
-                                                  padding: EdgeInsetsDirectional.fromSTEB(SizeUnit.widthSizeUnit *8,0,0,0),
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          SizeUnit.widthSizeUnit *
+                                                              8,
+                                                          0,
+                                                          0,
+                                                          0),
                                                   child: Text(
                                                     "${userDataList[index].login}",
                                                     style: const TextStyle(
-                                                    color: AppColors.textLoginColor),
+                                                        color: AppColors
+                                                            .textLoginColor),
                                                   ),
                                                 ),
 
                                                 // Badge row
                                                 Padding(
-                                                    padding: EdgeInsetsDirectional.fromSTEB(SizeUnit.widthSizeUnit * 8,SizeUnit.heightSizeUnit *1,0, 0),
+                                                    padding: EdgeInsetsDirectional
+                                                        .fromSTEB(
+                                                            SizeUnit.widthSizeUnit *
+                                                                8,
+                                                            SizeUnit.heightSizeUnit *
+                                                                1,
+                                                            0,
+                                                            0),
                                                     child: Container(
-                                                      width: SizeUnit.widthSizeUnit *20,
-                                                      height: SizeUnit.widthSizeUnit *6,
+                                                      width: SizeUnit
+                                                              .widthSizeUnit *
+                                                          20,
+                                                      height: SizeUnit
+                                                              .widthSizeUnit *
+                                                          6,
                                                       decoration: BoxDecoration(
-                                                        color: AppColors.badgeColor,
-                                                        borderRadius:BorderRadius.circular(25),
+                                                        color: AppColors
+                                                            .badgeColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
                                                       ),
                                                       child: Center(
                                                         child: Text(
                                                             '${Badge.badgeSiteAdmin(userDataList[index].siteAdmin)}',
-                                                            textAlign: TextAlign.center,
-                                                            style:const TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 12,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 12,
                                                             )),
                                                       ),
                                                     ))
@@ -127,8 +157,7 @@ class _UserListState extends State<UserList> {
                                   ],
                                 ),
                               ),
-                            // end of Item code 
-                            
+                              // end of Item code
                             );
                           }))
                 ],

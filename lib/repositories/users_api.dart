@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:github_api_app/constants/app_string.dart';
-import 'package:github_api_app/models/user_detail.dart';
+
 import 'package:github_api_app/models/users.dart';
+import 'package:github_api_app/models/user_detail.dart';
+import 'package:github_api_app/repositories/repo_get.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
-// class consist function to fetch json from API and parse it to models 
-class NetworkRequest {
-
-//User List
-
-  // request json list user from url=> parse it to List<User> with pasreUsers function and return List<User>
-  static Future<List<Users>> fetchUsers(String urlToGetUsers) async{
+class UsersAPI extends RepoGet {
+  @override
+  Future<List<Users>> getAllUsersList() async {
     
     final response = await http.get(Uri.parse(urlToGetUsers));
     if(response.statusCode==200){
@@ -30,12 +27,8 @@ class NetworkRequest {
     return users;
   }
 
-//=====================
-
-// User Detail
-
-  // Request json UserDetail from url which passed from UserList screen => parse it to UserDetail model and return UserDetail
-  static Future<UserDetail> fetchUserDetail(String urlDetail) async{
+  @override
+  Future<UserDetail> getUserDetail() async {
     final response_detail = await http.get(Uri.parse(urlDetail));
     if(response_detail.statusCode==200){
       print("fetch success $urlDetail at:\n ${DateTime.now().millisecondsSinceEpoch}" );
@@ -56,7 +49,6 @@ class NetworkRequest {
     print("---------------");
     return usersDetail;
   }
-
-
+  }
+  
 }
-
