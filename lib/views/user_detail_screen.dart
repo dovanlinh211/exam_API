@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:github_api_app/constants/app_color.dart';
 import 'package:github_api_app/constants/size_unit.dart';
+import 'package:github_api_app/repositories/users_api.dart';
 import 'package:github_api_app/utils/badge_convert.dart';
-import 'package:github_api_app/network/network_request.dart';
+import 'package:github_api_app/view_models/user_detail_view_model.dart';
 
 class UserDetailScreen extends StatelessWidget {
   final String? url;
-  const UserDetailScreen({Key? key, required this.url}) : super(key: key);
+  UserDetailScreen({Key? key, required this.url}) : super(key: key);
+
+  var userDetailViewModel = UserDetailViewModel(repoGet: UsersAPI());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,9 +23,10 @@ class UserDetailScreen extends StatelessWidget {
         children: [
           Expanded(
             child: FutureBuilder(
-                future: NetworkRequest.fetchUserDetail(url!),
+                future: userDetailViewModel.fetchUserDetail(url!),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
+                    var userDetail = snapshot.data;
                     return Column(
                       children: [
                         // Avatar image container
@@ -36,7 +40,7 @@ class UserDetailScreen extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                             child: Image.network(
-                              '${snapshot.data.avatarUrl}',
+                              '${userDetail.avatarUrl}',
                             ),
                           ),
                         ),
@@ -45,7 +49,7 @@ class UserDetailScreen extends StatelessWidget {
                           padding: const EdgeInsetsDirectional.fromSTEB(
                               0, 10, 0, 10),
                           child: Text(
-                            '${snapshot.data.name}',
+                            '${userDetail.name}',
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 16,
@@ -57,7 +61,7 @@ class UserDetailScreen extends StatelessWidget {
                           padding: EdgeInsetsDirectional.fromSTEB(
                               0, 0, 0, SizeUnit.heightSizeUnit * 2),
                           child: Text(
-                            '${snapshot.data.bio}',
+                            '${userDetail.bio}',
                             style: const TextStyle(
                               fontFamily: 'Poppins',
                               fontSize: 16,
@@ -96,7 +100,7 @@ class UserDetailScreen extends StatelessWidget {
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 4.0),
                                     child: Text(
-                                      '${snapshot.data.login}',
+                                      '${userDetail.login}',
                                       style: const TextStyle(
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight.w400,
@@ -112,7 +116,7 @@ class UserDetailScreen extends StatelessWidget {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        '${Badge.badgeSiteAdmin(snapshot.data.siteAdmin)}',
+                                        '${Badge.badgeSiteAdmin(userDetail.siteAdmin)}',
                                         textAlign: TextAlign.center,
                                         style: const TextStyle(
                                           fontFamily: 'Poppins',
@@ -144,7 +148,7 @@ class UserDetailScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '${snapshot.data.location}',
+                                '${userDetail.location}',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontWeight: FontWeight.normal,
@@ -170,7 +174,7 @@ class UserDetailScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '${snapshot.data.blog}',
+                                '${userDetail.blog}',
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   color: AppColors.badgeColor,

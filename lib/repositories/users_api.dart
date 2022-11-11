@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:github_api_app/constants/app_string.dart';
 import 'package:github_api_app/models/users.dart';
 import 'package:github_api_app/models/user_detail.dart';
 import 'package:github_api_app/repositories/repo_get.dart';
@@ -10,7 +11,7 @@ class UsersAPI extends RepoGet {
   @override
   Future<List<Users>> getAllUsersList() async {
     
-    final response = await http.get(Uri.parse(urlToGetUsers));
+    final response = await http.get(Uri.parse(AppString.urlToGetUser));
     if(response.statusCode==200){
       return compute(parseUsers,response.body);
     }
@@ -28,10 +29,10 @@ class UsersAPI extends RepoGet {
   }
 
   @override
-  Future<UserDetail> getUserDetail() async {
+  Future<UserDetail> getUserDetail(String urlDetail) async {
     final response_detail = await http.get(Uri.parse(urlDetail));
     if(response_detail.statusCode==200){
-      print("fetch success $urlDetail at:\n ${DateTime.now().millisecondsSinceEpoch}" );
+      print("fetch success urlDetail at:\n ${DateTime.now().millisecondsSinceEpoch}" );
       // print(response_detail.body);
       return compute(parseUserDetail,response_detail.body);
     }
@@ -51,4 +52,3 @@ class UsersAPI extends RepoGet {
   }
   }
   
-}

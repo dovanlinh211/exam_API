@@ -10,7 +10,7 @@ class UsersLocal extends RepoGet {
   }
 
   @override
-  Future<UserDetail> getUserDetail() {
+  Future<UserDetail> getUserDetail(String urlDetail) {
     // TODO: implement getUserDetail
     throw UnimplementedError();
   }
